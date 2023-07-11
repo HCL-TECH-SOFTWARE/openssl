@@ -62,15 +62,15 @@ static void *thread_run(void *arg)
 {
     void (*f)(void);
 
-    *(void **) (&f) = arg;
+    f = (void (*)()) arg;
 
-    f();
+    (*f)();
     return NULL;
 }
 
 static int run_thread(thread_t *t, void (*f)(void))
 {
-    return pthread_create(t, NULL, thread_run, *(void **) &f) == 0;
+    return pthread_create(t, NULL, thread_run, (void *)f) == 0;
 }
 
 static int wait_for_thread(thread_t thread)
