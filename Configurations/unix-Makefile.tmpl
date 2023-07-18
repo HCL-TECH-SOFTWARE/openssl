@@ -1797,7 +1797,7 @@ $simple: $full
 EOF
           } elsif (sharedaix_svr4()) {
               $recipe .= <<"EOF";
-$simple: $full
+$simple: $full $defs[0]
 	rm -f $simple && \\
 	echo \\#!$full > $simple && \\
         cat $defs[0] >>$simple
