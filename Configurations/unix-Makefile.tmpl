@@ -11,8 +11,10 @@
      sub windowsdll { $config{target} =~ /^(?:Cygwin|mingw)/ }
 
      # Shared AIX support is special. We put libcrypto[64].so.ver into
-     # libcrypto.a and use libcrypto_a.a as static one.
-     sub sharedaix  { !$disabled{shared} && $config{target} =~ /^aix/ }
+     # libcrypto.a and use libcrypto_a.a as static one, except
+     # for aix-svr4
+     sub sharedaix  { !$disabled{shared} && $target{shared_target} =~ /^aix(?!-svr4$)/ }
+     sub sharedaix_svr4  { !$disabled{shared} && $target{shared_target} =~ /^aix-svr4$/ }
 
      our $sover_dirname = platform->shlib_version_as_filename();
 
@@ -1792,6 +1794,13 @@ EOF
 $simple: $full
 	rm -f $simple && \\
 	\$(AR) r $simple $full
+EOF
+          } elsif (sharedaix_svr4()) {
+              $recipe .= <<"EOF";
+$simple: $full
+	rm -f $simple && \\
+	echo \\#!$full > $simple && \\
+        cat $defs[0] >>$simple
 EOF
           } else {
               $recipe .= <<"EOF";
