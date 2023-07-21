@@ -31,3 +31,17 @@ sub staticname {
 
     return platform::BASE->staticname($_[1]) . ($disabled{shared} ? '' : '_a');
 }
+
+# In solib mode, we do not install the simple symlink (we install the import
+# library).  In regular mode, we install the symlink.
+sub sharedlib_simple {
+    return undef if $target{shared_target} eq "aix-solib";
+    return platform::Unix->sharedlib_simple($_[1], $_[0]->shlibextsimple());
+}
+
+# In solib mode, we install the import library.  In regular mode, we have
+# no import library.
+sub sharedlib_import {
+    return platform::Unix->sharedlib_simple($_[1]) if $target{shared_target} eq "aix-solib";
+    return undef;
+}
