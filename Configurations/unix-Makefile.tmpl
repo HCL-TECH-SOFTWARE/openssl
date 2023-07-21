@@ -11,9 +11,11 @@
      sub windowsdll { $config{target} =~ /^(?:Cygwin|mingw)/ }
 
      # Shared AIX support is special. We put libcrypto[64].so.ver into
-     # libcrypto.a and use libcrypto_a.a as static one, except
-     # for aix-solib which uses libcrypto.so as a link-import library
-     # that inserts runtime dependencies on libcrypto.so.ver
+     # libcrypto.a and use libcrypto_a.a as static one, unless using
+     # shared_target style aix-solib.  In that mode, create
+     # libcrypto.so as a link-import library that inserts runtime
+     # dependencies on libcrypto.so.ver, and the static library is
+     # named libcrypto.a.
      sub sharedaix  { !$disabled{shared} && $target{shared_target} =~ /^aix(?!-solib$)/ }
      sub sharedaix_solib  { !$disabled{shared} && $target{shared_target} =~ /^aix-solib$/ }
 
