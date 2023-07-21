@@ -13,14 +13,15 @@ require platform::Unix;
 use configdata;
 
 sub dsoext              { '.so' }
-sub shlibextsimple      { return '.so' if $target{shared_target} eq "aix-svr4";
+sub shlibextsimple      { return '.so' if $target{shared_target} eq "aix-solib";
 			  '.a'}
 
 # In shared mode, the default static library names clashes with the final
 # "simple" full shared library name, so we add '_a' to the basename of the
-# static libraries in that case, unless in svr4 mode (using only .so files)
+# static libraries in that case, unless in solib mode (using only .so
+# files for shared libraries, and not packaging them inside archives)
 sub staticname {
-    return platform::Unix->staticname($_[1]) if $target{shared_target} eq "aix-svr4";
+    return platform::Unix->staticname($_[1]) if $target{shared_target} eq "aix-solib";
 
     # Non-installed libraries are *always* static, and their names remain
     # the same, except for the mandatory extension

@@ -12,9 +12,10 @@
 
      # Shared AIX support is special. We put libcrypto[64].so.ver into
      # libcrypto.a and use libcrypto_a.a as static one, except
-     # for aix-svr4
-     sub sharedaix  { !$disabled{shared} && $target{shared_target} =~ /^aix(?!-svr4$)/ }
-     sub sharedaix_svr4  { !$disabled{shared} && $target{shared_target} =~ /^aix-svr4$/ }
+     # for aix-solib which uses libcrypto.so as a link-import library
+     # that inserts runtime dependencies on libcrypto.so.ver
+     sub sharedaix  { !$disabled{shared} && $target{shared_target} =~ /^aix(?!-solib$)/ }
+     sub sharedaix_solib  { !$disabled{shared} && $target{shared_target} =~ /^aix-solib$/ }
 
      our $sover_dirname = platform->shlib_version_as_filename();
 
@@ -1795,7 +1796,7 @@ $simple: $full
 	rm -f $simple && \\
 	\$(AR) r $simple $full
 EOF
-          } elsif (sharedaix_svr4()) {
+          } elsif (sharedaix_solib()) {
               $recipe .= <<"EOF";
 $simple: $full $defs[0]
 	rm -f $simple && \\
